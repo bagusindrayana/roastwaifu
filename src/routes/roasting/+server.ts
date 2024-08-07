@@ -34,7 +34,7 @@ function infoInggris(body: any) {
 }
 
 export const POST: RequestHandler = async (event) => {
-    const allowedOrigins = ['https://roastwaifu.vercel.app', 'roastwaifu.vercel.app'];
+    const allowedOrigins = ['https://roastwaifu.vercel.app', 'roastwaifu.vercel.app','roastwaifu.my.id','https://roastwaifu.my.id'];
     const origin = event.request.headers.get('origin');
     const headersCors: {
         'Access-Control-Allow-Methods': string;

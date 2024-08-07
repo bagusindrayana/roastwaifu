@@ -1,32 +1,27 @@
-<script>
+<script lang="ts">
     import { onMount } from "svelte";
     import debounce from "lodash/debounce";
 
     export let placeholder = "Select an option";
     export let apiUrl = "https://api.jikan.moe/v4/characters";
-    export let onSelect = (/** @type {{ imageUrl: any; label: any; smallImage: any; id: any; } | null} */ option) => {};
+    export let onSelect = (option: { imageUrl: any; label: any; smallImage: any; id: any; } | null) => {};
 
-    /**
-     * @type {{ imageUrl: any; label: any; smallImage: any; id: any; } | null}
-     */
-    let selectedOption = null;
+
+    let selectedOption: { imageUrl: any; label: any; smallImage: any; id: any; } | null = null;
     export let searchTerm = "";
-    /**
-     * @type {any[]}
-     */
-    let options = [];
+
+    let options: any[] = [];
     let isLoading = false;
     let isOpen = false;
 
  
 
-    async function fetchOptions(/** @type {string} */ query) {
+    async function fetchOptions(query: string) {
         isLoading = true;
         try {
             const response = await fetch(`${apiUrl}?q=${query}`, {
                 headers: {
                     "Content-Type": "application/json",
-                    // "Authorization": "NDIyNzAyNTQwMTkxMTcwNTYx.MTcyMjc4NTg5NQ--.5877dbd2631"
                 },
             });
             if (!response.ok) throw new Error("Failed to fetch options");
@@ -43,13 +38,11 @@
     const debouncedFetch = debounce(fetchOptions, 300);
 
     $: {
-        if (searchTerm.length > 2) {
-            debouncedFetch(searchTerm);
-        }
+        debouncedFetch(searchTerm);
     }
 
     const handleSelect = (
-        /** @type {{ imageUrl: any; label: any; smallImage: any; id: any; } | null} */ option,
+        option: { imageUrl: any; label: any; smallImage: any; id: any; } | null,
     ) => {
         selectedOption = option;
         isOpen = false;
@@ -63,9 +56,9 @@
         }
     };
 
-    onMount(() => {
-        fetchOptions("");
-    });
+    // onMount(() => {
+    //     fetchOptions("");
+    // });
 </script>
 
 <div class="select-container">
@@ -124,6 +117,7 @@
         padding: 8px;
         border: 1px solid #ccc;
         cursor: pointer;
+        border-radius: 4px;
     }
 
     .dropdown {

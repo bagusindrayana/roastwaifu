@@ -1,8 +1,11 @@
-import { json,error } from "@sveltejs/kit";
+import { json, error } from "@sveltejs/kit";
 import axios from "axios";
 import { RateLimiter } from 'sveltekit-rate-limiter/server';
 import type { RequestHandler } from './$types';
 import { dev } from '$app/environment';
+import { OPENAI_PROXY_URL, OPENAI_MODEL, OPEN_AI_API_KEY } from '$env/static/private';
+import OpenAI from 'openai';
+
 const limiter = new RateLimiter({
     // A rate is defined as [number, unit]
     IP: [15, 'm'], // IP address limiter
@@ -34,7 +37,7 @@ function infoInggris(body: any) {
 }
 
 export const POST: RequestHandler = async (event) => {
-    const allowedOrigins = ['https://roastwaifu.vercel.app', 'roastwaifu.vercel.app','roastwaifu.my.id','https://roastwaifu.my.id'];
+    const allowedOrigins = ['https://roastwaifu.vercel.app', 'roastwaifu.vercel.app', 'roastwaifu.my.id', 'https://roastwaifu.my.id'];
     const origin = event.request.headers.get('origin');
     const headersCors: {
         'Access-Control-Allow-Methods': string;
@@ -45,7 +48,7 @@ export const POST: RequestHandler = async (event) => {
         'Access-Control-Allow-Headers': 'Content-Type'
     };
 
-    if(dev){
+    if (dev) {
         headersCors['Access-Control-Allow-Origin'] = '*';
     } else {
         if (!allowedOrigins.includes(origin ?? '')) {
@@ -59,24 +62,43 @@ export const POST: RequestHandler = async (event) => {
         error(429, 'Too Many Requests');
     }
     const body = await event.request.json();
-    let prompt = "sebagai candaan, tolong roasting dengan kejam serta menyindir dengan bahasa gaul dan gunakan emotikon bila perlu, " + infoIndo(body) + ". (hanya berikan response dengan bahasa indonesia. response tidak lebih dari 150 kata)";
+    let prompt = "sebagai candaan, tolong roasting dengan kejam serta menyindir dengan bahasa gaul dan gunakan emotikon bila perlu, " + infoIndo(body) + ". (hanya berikan response singkat dengan bahasa indonesia. jangan berikan pujian apapun. response tidak lebih dari 100 kata)";
     if (body.language == "english") {
-        prompt = "as a joke, please roast with harshly and sarcastic with slang language and use emoticon if needed, " + infoInggris(body) + ". (only give response with english language. response not more than 150 words)";
+        prompt = "as a joke, please roast with harshly and sarcastic with slang language and use emoticon if needed, " + infoInggris(body) + ". (only give short response with english language. dont give any praise.response not more than 100 words)";
     }
     try {
-        const url = "https://api.nyxs.pw/ai/gpt4?text=" + prompt;
-        const response = await axios.get(url);
-        const data = await response.data;
+        // kalau mau pakei api gratisan
+        // const url = "https://api.nyxs.pw/ai/gemini?text=" + prompt;
+        // const response = await axios.get(url);
+        // const data = await response.data;
+        // return json({
+        //     roasting: data.result
+        // },{
+        //     headers: headersCors
+        // });
+
+        const client = new OpenAI({
+            apiKey: OPEN_AI_API_KEY != "NULL" ? OPEN_AI_API_KEY : "",
+            baseURL: OPENAI_PROXY_URL ?? 'https://api.openai.com',
+        });
+
+        const chatCompletion = await client.chat.completions.create({
+            messages: [{ role: 'user', content: prompt }],
+            model: OPENAI_MODEL ?? 'gpt-4o-mini',
+        });
+        const data = chatCompletion.choices[0];
+
+
         return json({
-            roasting: data.result
-        },{
+            roasting: data.message.content
+        }, {
             headers: headersCors
         });
-      
+
     } catch (error: any) {
         return json({
             error: error.message
-        },{
+        }, {
             status: 500,
             headers: headersCors
         });

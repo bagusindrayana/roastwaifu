@@ -15,23 +15,23 @@ const limiter = new RateLimiter({
 
 
 function infoIndo(body: any) {
-    let info = "karakternya adalah : " + body.characterInfo.data.name + " dengan biodata : " + body.characterInfo.data.about;
+    let info = "Nama : " + body.characterInfo.data.name + " dengan biodata : " + body.characterInfo.data.about;
     if (body.characterInfo.data.anime.length > 0) {
-        info = info + ", anime : " + body.characterInfo.data.anime[0].anime.title + " sebagai " + body.characterInfo.data.anime[0].role
+        info = info + ", dari anime : " + body.characterInfo.data.anime[0].anime.title + " sebagai " + body.characterInfo.data.anime[0].role
     }
     if (body.characterInfo.data.manga.length > 0) {
-        info = info + ", manga : " + body.characterInfo.data.manga[0].manga.title + " sebagai " + body.characterInfo.data.manga[0].role
+        info = info + ", dari manga : " + body.characterInfo.data.manga[0].manga.title + " sebagai " + body.characterInfo.data.manga[0].role
     }
     return info;
 }
 
 function infoInggris(body: any) {
-    let info = "the character is : " + body.characterInfo.data.name + " with bio : " + body.characterInfo.data.about;
+    let info = "Name : " + body.characterInfo.data.name + " with bio : " + body.characterInfo.data.about;
     if (body.characterInfo.data.anime.length > 0) {
-        info = info + ", anime : " + body.characterInfo.data.anime[0].anime.title + " as " + body.characterInfo.data.anime[0].role
+        info = info + ", from anime : " + body.characterInfo.data.anime[0].anime.title + " as " + body.characterInfo.data.anime[0].role
     }
     if (body.characterInfo.data.manga.length > 0) {
-        info = info + ", manga : " + body.characterInfo.data.manga[0].manga.title + " as " + body.characterInfo.data.manga[0].role
+        info = info + ", from manga : " + body.characterInfo.data.manga[0].manga.title + " as " + body.characterInfo.data.manga[0].role
     }
     return info;
 }
@@ -62,9 +62,9 @@ export const POST: RequestHandler = async (event) => {
         error(429, 'Too Many Requests');
     }
     const body = await event.request.json();
-    let prompt = "sebagai candaan, tolong roasting dengan kejam serta menyindir dengan bahasa gaul dan gunakan emotikon bila perlu, " + infoIndo(body) + ". (hanya berikan response singkat dengan bahasa indonesia. jangan berikan pujian apapun. response tidak lebih dari 100 kata)";
+    let prompt = "berikan roasting singkat dengan kejam,menyindir, serta menyakitkan dalam bahasa gaul untuk karakter berikut : " + infoIndo(body) + ". (hanya berikan response singkat dengan bahasa indonesia. jangan berikan pujian apapun. response tidak lebih dari 100 kata)";
     if (body.language == "english") {
-        prompt = "as a joke, please roast with harshly and sarcastic with slang language and use emoticon if needed, " + infoInggris(body) + ". (only give short response with english language. dont give any praise.response not more than 100 words)";
+        prompt = "give a short and harsh roasting for the following character : " + infoInggris(body) + ". (only give short response with english language. dont give any praise.response not more than 100 words)";
     }
     try {
         // kalau mau pakei api gratisan

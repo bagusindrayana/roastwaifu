@@ -35,10 +35,12 @@
         }
     }
 
-    const debouncedFetch = debounce(fetchOptions, 300);
+    const debouncedFetch = debounce(fetchOptions, 500);
 
     $: {
-        debouncedFetch(searchTerm);
+        if (searchTerm.length > 0) {
+            debouncedFetch(searchTerm);
+        }
     }
 
     const handleSelect = (

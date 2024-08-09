@@ -28,7 +28,6 @@
 		"axios": "^1.7.3",
 		"choices.js": "^10.2.0",
 		"lodash": "^4.17.21",
-		"openai": "^4.55.0",
 		"svelte-markdown": "^0.4.1",
 		"sveltekit-rate-limiter": "^0.5.2"
 	}

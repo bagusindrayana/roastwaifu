@@ -46,6 +46,7 @@
             roastingResult = data.roasting;
         } catch (error: any) {
             selectedCharacter = null;
+            isLoading = false;
             console.error("Error roasting waifu:", error);
             if (axios.isAxiosError(error)) {
                 if (error.response?.status === 504) {
@@ -53,7 +54,7 @@
                 } else if (error.response?.status === 429) {
                     roastingResult = "Too many request, please try again later";
                 } else {
-                    roastingResult = error.response?.data.message;
+                    roastingResult = error.response?.data.message ?? error.response?.data.error;
                 }
             } else {
                 roastingResult = error.message;

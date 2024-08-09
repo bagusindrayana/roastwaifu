@@ -3,8 +3,8 @@ import axios from "axios";
 import { RateLimiter } from 'sveltekit-rate-limiter/server';
 import type { RequestHandler } from './$types';
 import { dev } from '$app/environment';
-import { OPENAI_PROXY_URL, OPENAI_MODEL, OPEN_AI_API_KEY } from '$env/static/private';
-import OpenAI from 'openai';
+import { GEMINI_AI_KEY } from '$env/static/private';
+import { GoogleGenerativeAI, GoogleGenerativeAIResponseError, HarmCategory, HarmBlockThreshold, GoogleGenerativeAIError } from "@google/generative-ai";
 
 const limiter = new RateLimiter({
     // A rate is defined as [number, unit]
@@ -67,30 +67,28 @@ export const POST: RequestHandler = async (event) => {
         prompt = "give a short and harsh roasting for the following character : " + infoInggris(body) + ". (only give short response with english language. dont give any praise.response not more than 100 words)";
     }
     try {
-        // kalau mau pakei api gratisan
-        // const url = "https://api.nyxs.pw/ai/gemini?text=" + prompt;
-        // const response = await axios.get(url);
-        // const data = await response.data;
-        // return json({
-        //     roasting: data.result
-        // },{
-        //     headers: headersCors
-        // });
 
-        const client = new OpenAI({
-            apiKey: OPEN_AI_API_KEY != "NULL" ? OPEN_AI_API_KEY : "",
-            baseURL: OPENAI_PROXY_URL ?? 'https://api.openai.com',
-        });
-
-        const chatCompletion = await client.chat.completions.create({
-            messages: [{ role: 'user', content: prompt }],
-            model: OPENAI_MODEL ?? 'gpt-4o-mini',
-        });
-        const data = chatCompletion.choices[0];
+        const safetySettings = [
+            {
+                category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+                threshold: HarmBlockThreshold.BLOCK_NONE,
+            },
+            {
+                category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                threshold: HarmBlockThreshold.BLOCK_NONE,
+            },
+        ];
+        //split coma and get one random key
+        const geminiApiKeys = GEMINI_AI_KEY.split(",");
+        const randomGeminiApiKey = geminiApiKeys[Math.floor(Math.random() * geminiApiKeys.length)];
+        let genAI = new GoogleGenerativeAI(randomGeminiApiKey);
+        const modelAi = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
+        const result = await modelAi.generateContent(prompt);
+        const response = await result.response;
 
 
         return json({
-            roasting: data.message.content
+            roasting: response.text()
         }, {
             headers: headersCors
         });

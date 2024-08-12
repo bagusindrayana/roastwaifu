@@ -8,7 +8,7 @@
     let backendUrl = "";
 
     let waifuId: number = 1;
-    let language: string = "indonesia";
+    let language: string = "english";
     let roastingResult: string = "";
     let isLoading = false;
     let selectedCharacter: any = null;

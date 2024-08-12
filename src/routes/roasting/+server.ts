@@ -62,6 +62,10 @@ export const POST: RequestHandler = async (event) => {
         error(429, 'Too Many Requests');
     }
     const body = await event.request.json();
+
+    //debug name
+    console.log(body.characterInfo.data.name);
+
     let prompt = "berikan roasting singkat dengan kejam,menyindir, serta menyakitkan dalam bahasa gaul untuk karakter berikut : " + infoIndo(body) + ". (hanya berikan response singkat dengan bahasa indonesia. jangan berikan pujian apapun. response tidak lebih dari 100 kata)";
     if (body.language == "english") {
         prompt = "give a short and harsh roasting for the following character : " + infoInggris(body) + ". (only give short response with english language. dont give any praise.response not more than 100 words)";

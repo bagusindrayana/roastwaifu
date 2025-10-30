@@ -86,7 +86,7 @@ export const POST: RequestHandler = async (event) => {
         const geminiApiKeys = GEMINI_AI_KEY.split(",");
         const randomGeminiApiKey = geminiApiKeys[Math.floor(Math.random() * geminiApiKeys.length)];
         let genAI = new GoogleGenerativeAI(randomGeminiApiKey);
-        const modelAi = genAI.getGenerativeModel({ model: "gemini-1.5-flash", safetySettings });
+        const modelAi = genAI.getGenerativeModel({ model: "gemini-2.5-flash", safetySettings });
         const result = await modelAi.generateContent(prompt);
         const response = await result.response;
 
